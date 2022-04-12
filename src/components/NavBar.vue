@@ -1,36 +1,44 @@
 <template>
-  <v-card class="mx-auto overflow-hidden" height="400">
-    <v-app-bar dense>
-      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+  <v-card>
+      <v-app-bar color="primary" prominent>
+        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>
-        Kabbage Boards
-      </v-toolbar-title>
+        <v-toolbar-title>Kabbage Boards</v-toolbar-title>
 
-      <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-      <v-btn icon @click="downloadProjectBackup">
-        <v-icon>mdi-backup-restore</v-icon>
-      </v-btn>
+        <v-btn variant="text" icon="mdi-magnify"></v-btn>
 
-    </v-app-bar>
+        <v-btn variant="text" icon @click="downloadProjectBackup">
+          <v-icon>mdi-backup-restore</v-icon>
+        </v-btn>
+      </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" absolute temporary>
-      <v-list nav dense>
-        <v-list-item v-for="value, key in projects"
-        :key="key" :to="{ name: 'home', params: { id: value.id } }">
-          <v-list-item-title>{{value.name}}</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+      <v-navigation-drawer
+        v-model="drawer"
+        bottom
+        temporary>
+        <v-list nav dense>
+          <v-list-item v-for="value, key in projects"
+          :key="key" :to="{ name: 'home', params: { id: value.id } }">
+            <v-list-item-title>{{value.name}}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
   </v-card>
 </template>
 
 <script>
 export default {
   data: () => ({
-    drawer: false
+    drawer: false,
+    group: null,
   }),
+  watch: {
+    group () {
+      this.drawer = false
+    },
+  },
   computed: {
     projects() {
       return this.$store.getters.sortedProjects;

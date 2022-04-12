@@ -1,12 +1,14 @@
 <template>
   <v-app>
-    <NavBar />
+    <v-layout>
+      <NavBar />
 
-    <v-main>
-      <v-container fluid>
-        <router-view :key="$route.fullPath" />
-      </v-container>
-    </v-main>
+      <v-main>
+        <v-container fluid>
+          <router-view :key="$route.fullPath" />
+        </v-container>
+      </v-main>
+    </v-layout>
   </v-app>
 </template>
 
