@@ -1,5 +1,7 @@
 <template>
   <v-app>
+    <NavBar />
+
     <v-main>
       <v-container fluid>
         <router-view :key="$route.fullPath" />
@@ -9,12 +11,12 @@
 </template>
 
 <script>
-
+import NavBar from "./components/NavBar.vue";
 export default {
-  name: 'Kabbage Boards',
-
-  data: () => ({
-    //
-  }),
-}
+  components: { NavBar },
+  name: "KabbageBoards",
+  created() {
+    this.$store.dispatch("connectToDirectus");
+  },
+};
 </script>
