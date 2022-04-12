@@ -7,8 +7,6 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn variant="text" icon="mdi-magnify"></v-btn>
-
         <v-btn variant="text" icon @click="downloadProjectBackup">
           <v-icon>mdi-backup-restore</v-icon>
         </v-btn>
@@ -16,7 +14,6 @@
 
       <v-navigation-drawer
         v-model="drawer"
-        bottom
         temporary>
         <v-list nav dense>
           <v-list-item v-for="value, key in projects"
@@ -32,13 +29,7 @@
 export default {
   data: () => ({
     drawer: false,
-    group: null,
   }),
-  watch: {
-    group () {
-      this.drawer = false
-    },
-  },
   computed: {
     projects() {
       return this.$store.getters.sortedProjects;

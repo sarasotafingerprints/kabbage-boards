@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <v-layout>
       <NavBar />
 
       <v-main>
@@ -8,7 +7,6 @@
           <router-view :key="$route.fullPath" />
         </v-container>
       </v-main>
-    </v-layout>
   </v-app>
 </template>
 
