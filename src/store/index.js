@@ -26,6 +26,17 @@ export default createStore({
         return 0
       }).filter(project => project.active);
     },
+
+    activeBoardIDs (state) {
+      return state.activeBoards.map(board => board.id);
+    },
+    activeBucketIDs (state) {
+      return state.activeBuckets.map(bucket => bucket.id);
+    },
+    activeTopicIDs (state) {
+      return state.activeTopics.map(topic => topic.id);
+    },
+
     bucketsByBoardID (state) {
       let output = {}
       state.activeBoards.forEach(board => {
@@ -202,6 +213,14 @@ export default createStore({
       } else {
         context.log("Error: No active project");
       }
+    },
+
+    newBucket(context, bucket) {
+      directus.items('buckets').createOne(bucket ,{fields: ['id', 'name', 'board_id']}).then(newBucket => {
+        context.commit('upsertBucket', newBucket);
+      }).catch(error => {
+        console.log('Could not create new bucket: ' + error);
+      });
     }
   },
 })

@@ -3,22 +3,37 @@
     v-for="board in activeBoards" :key="board.id"
     class="mb-4"
   >
-    <v-card-title>{{board.name}}</v-card-title>
+    <v-card-title>
+      {{board.name}}
+      <NewBucketDialog :board_id="board.id"/>
+    </v-card-title>
 
     <v-card-text>
-      <v-list v-for="bucket in bucketsByBoardID[board.id]" :key="bucket.id">
-        <v-list-subheader>{{bucket.name}}</v-list-subheader>
-        <draggable v-model="topicsByBucketID[bucket.id]" :options="{group:'topic'}" style="min-height: 10px">
-          <template v-for="topic in topicsByBucketID[bucket.id]" :key="topic.id">
-            <v-list-item two-line>
-              <v-list-item-header>
-                <v-list-item-title>{{topic.name}}</v-list-item-title>
-                <v-list-item-subtitle>{{topic.description}}</v-list-item-subtitle>
-              </v-list-item-header>
-            </v-list-item>
-          </template>
-        </draggable>
-      </v-list>
+      <v-row>
+        <v-col v-for="bucket in bucketsByBoardID[board.id]" :key="bucket.id">
+          <v-list>
+            <v-list-subheader>
+              {{bucket.name}}
+              
+            </v-list-subheader>
+            <draggable
+              class="list-group"
+              v-model="topicsByBucketID[bucket.id]"
+              group="bucket" 
+              itemKey="id">
+              <template #item="{element}">
+                <!-- <div>{{element.name}}</div> -->
+                <v-list-item two-line class="list-group-item">
+                  <v-list-item-header>
+                    <v-list-item-title>{{element.name}}</v-list-item-title>
+                    <v-list-item-subtitle>{{element.description}}</v-list-item-subtitle>
+                  </v-list-item-header>
+                </v-list-item>
+              </template>
+            </draggable>
+          </v-list>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 
@@ -38,10 +53,12 @@
 
 <script>
 import NewBoardDialog from '@/components/NewBoardDialog.vue';
+import NewBucketDialog from '@/components/NewBucketDialog.vue';
 import { defineComponent } from 'vue';
+import draggable from 'vuedraggable';
 export default defineComponent({
   name: 'ProjectView',
-  components: { NewBoardDialog },
+  components: { NewBoardDialog, NewBucketDialog, draggable },
   data: () => ({
     newBoardDialog: false,
   }),
@@ -55,9 +72,19 @@ export default defineComponent({
     bucketsByBoardID() {
       return this.$store.getters.bucketsByBoardID;
     },
-    topicsByBucketID() {
-      return this.$store.getters.topicsByBucketID;
+    topicsByBucketID: {
+      get() {
+        return this.$store.getters.topicsByBucketID;
+      },
+      set(value) {
+        console.log(value)
+      },
     },
-  }
+  },
+  methods: {
+    topicDragged(e) {
+      console.log(e);
+    },
+  },
 });
 </script>
