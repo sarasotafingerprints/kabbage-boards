@@ -17,7 +17,7 @@
         temporary>
         <v-list nav dense>
           <v-list-item v-for="value, key in projects"
-          :key="key" :to="{ name: 'home', params: { id: value.id } }">
+          :key="key" :to="{ name: 'project', params: { id: value.id } }">
             <v-list-item-title>{{value.name}}</v-list-item-title>
           </v-list-item>
         </v-list>

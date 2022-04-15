@@ -4,13 +4,13 @@ import ProjectView from '@/views/ProjectView.vue'
 const routes = [
   {
     path: '/:id',
-    name: 'home',
+    name: 'project',
     component: ProjectView
   },
   {
     path: '/',
     name: 'home',
-    component: ProjectView
+    component: () => import('@/views/HomeView.vue')
   },
 ]
 

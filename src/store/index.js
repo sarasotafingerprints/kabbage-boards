@@ -2,6 +2,8 @@ import { createStore } from 'vuex'
 import { Directus } from '@directus/sdk';
 
 const directus = new Directus('http://localhost:8055');
+const directusLogin = 'runyan@ashtacore.com'
+const directusPassword = 'd1r3ctu5'
 
 export default createStore({
   state: {
@@ -57,14 +59,15 @@ export default createStore({
   actions: {
     async connectToDirectus(context) {
       await directus.auth.login({
-        email: 'runyan@ashtacore.com',
-        password: 'd1r3ctu5',
-      }).then(() => {
-        context.dispatch('getProjects');
+        email: directusLogin,
+        password: directusPassword,
       }).catch(error => {
         console.log('Could not connect to Directus backend: ' + error);
       });
-    },      
+
+      await context.dispatch('getProjects');
+    },
+
     async getProjects(context) {
       await directus.items('projects').readByQuery({
         fields: ['id', 'name', 'active'], limit: -1
@@ -74,9 +77,10 @@ export default createStore({
         console.log(error);
       });
     },
-    async getActiveProject(context, project) {
+
+    async setActiveProject(context, projectID) {
       //Set active project
-      context.commit('setActiveProject', project)
+      context.commit('setActiveProject', context.state.projects.find(project => project.id == projectID));
 
       //Get boards relating to active project
       await directus.items('boards').readByQuery({

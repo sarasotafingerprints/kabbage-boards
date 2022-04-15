@@ -1,28 +1,29 @@
 <template>
   <v-card
-    class="mx-auto"
-    width="400"
-    v-if="activeProject.id==0"
+    v-for="value in activeBoards" :key="value.id"
+    class="mb-4"
   >
-    <template v-slot:title>
-      Please Pick a Project to Get Started
-    </template>
-  </v-card>
+    <v-card-title>{{value.name}}</v-card-title>
 
-  <BoardS v-else />
+    <v-card-text>
+      This is content
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
 import { defineComponent } from 'vue';
-import BoardS from '@/components/BoardS'
 export default defineComponent({
   name: 'ProjectView',
-  components: {
-    BoardS,
-  },
   computed: {
     activeProject() {
       return this.$store.state.activeProject;
+    },
+    activeBoards() {
+      return this.$store.state.activeBoards;
+    },
+    activeBuckets() {
+      return this.$store.state.activeBuckets;
     },
   }
 });

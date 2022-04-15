@@ -16,7 +16,17 @@ export default {
   components: { NavBar },
   name: "KabbageBoards",
   created() {
-    this.$store.dispatch("connectToDirectus");
+    this.$store.dispatch("connectToDirectus").then(() => {
+      if(this.$route.params.id > 0) {
+        this.$store.dispatch("setActiveProject", this.$route.params.id);
+      }
+      this.$watch(
+        () => this.$route.params.id,
+        (newID) => {
+          this.$store.dispatch("setActiveProject", newID);
+        }
+      )
+    });
   },
 };
 </script>
