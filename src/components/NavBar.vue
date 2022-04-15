@@ -17,18 +17,33 @@
         temporary>
         <v-list nav dense>
           <v-list-item v-for="value, key in projects"
-          :key="key" :to="{ name: 'project', params: { id: value.id } }">
+            :key="key"
+            :to="{ name: 'project', params: { id: value.id } }">
             <v-list-item-title>{{value.name}}</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="newProjectDialog = true">
+            <v-list-item-avatar start>
+              <v-icon icon="mdi-folder-plus-outline" class="mr-2"></v-icon>
+            </v-list-item-avatar>
+            <v-list-item-title>Create Project</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
+
+      <v-dialog v-model="newProjectDialog" width="500">
+        <NewProjectMenu @saved="newProjectDialog = false" />
+      </v-dialog>
   </v-card>
 </template>
 
 <script>
+import NewProjectMenu from '@/components/NewProjectMenu.vue';
 export default {
+  components: { NewProjectMenu },
   data: () => ({
     drawer: false,
+    newProjectDialog: false,
   }),
   computed: {
     projects() {

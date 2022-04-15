@@ -19,21 +19,33 @@ export default createStore({
     activeComments: []
   },
   getters: {
-    activeBoardIDs (state) {
-      return state.activeBoards.map(board => board.id)
-    },
-    activeBucketIDs (state) {
-      return state.activeBuckets.map(bucket => bucket.id)
-    },
-    activeTopicIDs (state) {
-      return state.activeTopics.map(topic => topic.id)
-    },
     sortedProjects (state) {
       return state.projects.sort((a, b) => {
         if (a.id < b.id) return -1
         if (a.id > b.id) return 1
         return 0
+      }).filter(project => project.active);
+    },
+    bucketsByBoardID (state) {
+      let output = {}
+      state.activeBoards.forEach(board => {
+        output[board.id] = state.activeBuckets.filter(bucket => bucket.board_id === board.id)
       });
+      return output
+    },
+    topicsByBucketID (state) {
+      let output = {}
+      state.activeBuckets.forEach(bucket => {
+        output[bucket.id] = state.activeTopics.filter(topic => topic.bucket_id === bucket.id)
+      });
+      return output
+    },
+    commentsByTopicID (state) {
+      let output = {}
+      state.activeTopics.forEach(topic => {
+        output[topic.id] = state.activeComments.filter(comment => comment.topic_id === topic.id)
+      });
+      return output
     }
   },
   mutations: {
@@ -54,6 +66,47 @@ export default createStore({
     },
     setActiveComments(state, comments) {
       state.activeComments = comments;
+    },
+
+    upsertProject(state, project) {
+      const i = state.projects.findIndex(v => v.id === project.id);
+      if (i > -1) {
+        state.projects[i] = project;
+      } else {
+        state.projects.push(project);
+      }
+    },
+    upsertBoard(state, board) {
+      const i = state.activeBoards.findIndex(v => v.id === board.id);
+      if (i > -1) {
+        state.activeBoards[i] = board;
+      } else {
+        state.activeBoards.push(board);
+      }
+    },
+    upsertBucket(state, bucket) {
+      const i = state.activeBuckets.findIndex(v => v.id === bucket.id);
+      if (i > -1) {
+        state.activeBuckets[i] = bucket;
+      } else {
+        state.activeBuckets.push(bucket);
+      }
+    },
+    upsertTopic(state, topic) {
+      const i = state.activeTopics.findIndex(v => v.id === topic.id);
+      if (i > -1) {
+        state.activeTopics[i] = topic;
+      } else {
+        state.activeTopics.push(topic);
+      }
+    },
+    upsertComment(state, comment) {
+      const i = state.activeComments.findIndex(v => v.id === comment.id);
+      if (i > -1) {
+        state.activeComments[i] = comment;
+      } else {
+        state.activeComments.push(comment);
+      }
     }
   },
   actions: {
@@ -124,6 +177,31 @@ export default createStore({
       }).catch(error => {
         console.log('Could not get comments: ' + error);
       });
+    },
+
+    newProject(context, projectName) {
+      directus.items('projects').createOne({
+        name: projectName,
+      },{fields: ['id', 'name', 'active']}).then(newProject => {
+        context.commit('upsertProject', newProject);
+      }).catch(error => {
+        console.log('Could not create new project: ' + error);
+      });
+    },
+
+    newBoard(context, boardName) {
+      if (context.state.activeProject.id > 0) {
+        directus.items('boards').createOne({
+          name: boardName,
+          project_id: context.state.activeProject.id
+        },{fields: ['id', 'name']}).then(newBoard => {
+          context.commit('upsertBoard', newBoard);
+        }).catch(error => {
+          console.log('Could not create new board: ' + error);
+        });
+      } else {
+        context.log("Error: No active project");
+      }
     }
   },
 })
