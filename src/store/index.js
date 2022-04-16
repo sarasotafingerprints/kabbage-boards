@@ -55,7 +55,11 @@ export default createStore({
     topicsByBucketID (state) {
       let output = {}
       state.activeBuckets.forEach(bucket => {
-        output[bucket.id] = state.activeTopics.filter(topic => topic.bucket_id === bucket.id)
+        output[bucket.id] = state.activeTopics.filter(topic => topic.bucket_id === bucket.id).sort((a, b) => {
+          if (a.name < b.name) return -1
+          if (a.name > b.name) return 1
+          return 0
+        });
       });
       return output
     },
@@ -236,6 +240,22 @@ export default createStore({
         context.commit('upsertTopic', newTopic);
       }).catch(error => {
         console.log('Could not create new topic: ' + error);
+      });
+    },
+
+    newComment(context, comment) {
+      directus.items('comments').createOne(comment ,{fields: ['id', 'comment', 'topic_id']}).then(newComment => {
+        context.commit('upsertComment', newComment);
+      }).catch(error => {
+        console.log('Could not create new comment: ' + error);
+      });
+    },
+
+    moveTopic(context, {newTopic, oldTopic}) {
+      context.commit('upsertTopic', newTopic);
+      directus.items('topics').updateOne(newTopic.id, newTopic ,{fields: ['id', 'name', 'bucket_id', 'priority', 'description', 'tags']}).catch(error => {
+        console.log('Could not move topic: ' + error);
+        context.commit('upsertTopic', oldTopic);
       });
     }
   },

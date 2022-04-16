@@ -18,18 +18,17 @@
             </v-list-subheader>
             <draggable
               class="list-group"
-              v-model="lists[bucket.id]"
-              @change="topicDragged"
+              v-model="topicsByBucketID[bucket.id]"
+              @change="movedTopic(bucket.id, $event)"
               group="bucket" 
               itemKey="id">
-              <template #item="{ element, index }">
-                <div class="list-group-item">{{ element.name }} {{ index }}</div>
-                <!-- <v-list-item two-line class="list-group-item">
+              <template #item="{ element }">
+                <v-list-item two-line class="list-group-item">
                   <v-list-item-header>
                     <v-list-item-title>{{element.name}}</v-list-item-title>
                     <v-list-item-subtitle>{{element.description}}</v-list-item-subtitle>
                   </v-list-item-header>
-                </v-list-item> -->
+                </v-list-item>
               </template>
             </draggable>
           </v-list>
@@ -63,23 +62,6 @@ export default defineComponent({
   components: { NewBoardDialog, NewBucketDialog, NewTopicDialog, draggable },
   data: () => ({
     newBoardDialog: false,
-    lists: {
-      1: [
-        { id: 1, name: 'List 1' },
-        { id: 2, name: 'List 2' },
-        { id: 3, name: 'List 3' },
-      ],
-      2: [
-        { id: 4, name: 'List 4' },
-        { id: 5, name: 'List 5' },
-        { id: 6, name: 'List 6' },
-      ],
-      3: [
-        { id: 7, name: 'List 7' },
-        { id: 8, name: 'List 8' },
-        { id: 9, name: 'List 9' },
-      ],
-    }
   }),
   computed: {
     activeProject() {
@@ -96,14 +78,38 @@ export default defineComponent({
         return this.$store.getters.topicsByBucketID;
       },
       set(value) {
+        // This prevents any direct modification
         console.log(value)
       },
     },
   },
   methods: {
-    topicDragged(e) {
-      console.log(e);
-    },
+    movedTopic(bucket_id, event) {
+      if('added' in event) {
+        const newTopic = {
+          id: event.added.element.id,
+          name: event.added.element.name,
+          bucket_id: bucket_id,
+          priority: event.added.element.priority,
+          description: event.added.element.description,
+          tags: event.added.element.tags,
+        }
+        const oldTopic = {
+          id: event.added.element.id,
+          name: event.added.element.name,
+          bucket_id: event.added.element.bucket_id,
+          priority: event.added.element.priority,
+          description: event.added.element.description,
+          tags: event.added.element.tags,
+        }
+        this.$store.dispatch('moveTopic', {
+          newTopic: newTopic,
+          oldTopic: oldTopic,
+        });
+      }
+      // I don't need to handle a delete event because the store's upsert will handle it
+      // I don't care about the 'moved' event because I will always sort by name
+    }
   },
 });
 </script>
