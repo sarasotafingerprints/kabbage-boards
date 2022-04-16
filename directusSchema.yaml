@@ -123,10 +123,10 @@ collections:
         CREATE TABLE "projects" (`id` integer PRIMARY KEY AUTOINCREMENT NOT
         NULL, `user_created` char(36) NULL, `date_created` datetime NULL,
         `user_updated` char(36) NULL, `date_updated` datetime NULL, `name`
-        varchar(255) not null, CONSTRAINT `projects_user_created_foreign`
-        FOREIGN KEY (`user_created`) REFERENCES `directus_users` (`id`),
-        CONSTRAINT `projects_user_updated_foreign` FOREIGN KEY (`user_updated`)
-        REFERENCES `directus_users` (`id`))
+        varchar(255) not null, `active` boolean not null default '1', CONSTRAINT
+        `projects_user_created_foreign` FOREIGN KEY (`user_created`) REFERENCES
+        `directus_users` (`id`), CONSTRAINT `projects_user_updated_foreign`
+        FOREIGN KEY (`user_updated`) REFERENCES `directus_users` (`id`))
   - collection: topics
     meta:
       collection: topics
@@ -154,7 +154,7 @@ collections:
         `user_created` char(36) NULL, `date_created` datetime NULL,
         `user_updated` char(36) NULL, `date_updated` datetime NULL, `name`
         varchar(255) NOT NULL, `bucket_id` integer NOT NULL, `priority` integer
-        DEFAULT '3', `description` text null, `tags` varchar(255) null,
+        DEFAULT '3', `description` text NULL, `tags` json NOT NULL DEFAULT '[]',
         CONSTRAINT `topics_user_created_foreign` FOREIGN KEY (`user_created`)
         REFERENCES `directus_users` (`id`), CONSTRAINT
         `topics_user_updated_foreign` FOREIGN KEY (`user_updated`) REFERENCES
@@ -397,14 +397,14 @@ fields:
       group: null
       validation: null
       validation_message: null
-  - collection: boards
-    field: id
-    type: integer
+  - collection: projects
+    field: active
+    type: boolean
     schema:
-      name: id
-      table: boards
-      data_type: integer
-      default_value: null
+      name: active
+      table: projects
+      data_type: boolean
+      default_value: true
       max_length: null
       numeric_precision: null
       numeric_scale: null
@@ -412,257 +412,19 @@ fields:
       generation_expression: null
       is_nullable: false
       is_unique: false
-      is_primary_key: true
-      has_auto_increment: true
+      is_primary_key: false
+      has_auto_increment: false
       foreign_key_column: null
       foreign_key_table: null
     meta:
-      collection: boards
-      field: id
-      special: null
-      interface: input
+      collection: projects
+      field: active
+      special:
+        - cast-boolean
+      interface: boolean
       options: null
       display: null
       display_options: null
-      readonly: true
-      hidden: true
-      sort: null
-      width: full
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: boards
-    field: user_created
-    type: string
-    schema:
-      name: user_created
-      table: boards
-      data_type: char
-      default_value: null
-      max_length: 36
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: id
-      foreign_key_table: directus_users
-    meta:
-      collection: boards
-      field: user_created
-      special:
-        - user-created
-      interface: select-dropdown-m2o
-      options:
-        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
-      display: user
-      display_options: null
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: boards
-    field: date_created
-    type: dateTime
-    schema:
-      name: date_created
-      table: boards
-      data_type: datetime
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: null
-      foreign_key_table: null
-    meta:
-      collection: boards
-      field: date_created
-      special:
-        - date-created
-      interface: datetime
-      options: null
-      display: datetime
-      display_options:
-        relative: true
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: boards
-    field: user_updated
-    type: string
-    schema:
-      name: user_updated
-      table: boards
-      data_type: char
-      default_value: null
-      max_length: 36
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: id
-      foreign_key_table: directus_users
-    meta:
-      collection: boards
-      field: user_updated
-      special:
-        - user-updated
-      interface: select-dropdown-m2o
-      options:
-        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
-      display: user
-      display_options: null
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: boards
-    field: date_updated
-    type: dateTime
-    schema:
-      name: date_updated
-      table: boards
-      data_type: datetime
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: null
-      foreign_key_table: null
-    meta:
-      collection: boards
-      field: date_updated
-      special:
-        - date-updated
-      interface: datetime
-      options: null
-      display: datetime
-      display_options:
-        relative: true
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: boards
-    field: name
-    type: string
-    schema:
-      name: name
-      table: boards
-      data_type: varchar
-      default_value: null
-      max_length: 255
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: false
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: null
-      foreign_key_table: null
-    meta:
-      collection: boards
-      field: name
-      special: null
-      interface: input
-      options: null
-      display: null
-      display_options: null
-      readonly: false
-      hidden: false
-      sort: null
-      width: full
-      translations: null
-      note: null
-      conditions: null
-      required: true
-      group: null
-      validation: null
-      validation_message: null
-  - collection: boards
-    field: project_id
-    type: integer
-    schema:
-      name: project_id
-      table: boards
-      data_type: integer
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: false
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: id
-      foreign_key_table: projects
-    meta:
-      collection: boards
-      field: project_id
-      special:
-        - m2o
-      interface: select-dropdown-m2o
-      options:
-        template: '{{name}}'
-      display: related-values
-      display_options:
-        template: '{{name}}'
       readonly: false
       hidden: false
       sort: null
@@ -932,6 +694,560 @@ fields:
     meta:
       collection: buckets
       field: board_id
+      special:
+        - m2o
+      interface: select-dropdown-m2o
+      options:
+        template: '{{name}}'
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      readonly: false
+      hidden: false
+      sort: null
+      width: full
+      translations: null
+      note: null
+      conditions: null
+      required: true
+      group: null
+      validation: null
+      validation_message: null
+  - collection: comments
+    field: id
+    type: integer
+    schema:
+      name: id
+      table: comments
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: true
+      has_auto_increment: true
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: comments
+      field: id
+      special: null
+      interface: input
+      options: null
+      display: null
+      display_options: null
+      readonly: true
+      hidden: true
+      sort: null
+      width: full
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: comments
+    field: user_created
+    type: string
+    schema:
+      name: user_created
+      table: comments
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: id
+      foreign_key_table: directus_users
+    meta:
+      collection: comments
+      field: user_created
+      special:
+        - user-created
+      interface: select-dropdown-m2o
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      display: user
+      display_options: null
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: comments
+    field: date_created
+    type: dateTime
+    schema:
+      name: date_created
+      table: comments
+      data_type: datetime
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: comments
+      field: date_created
+      special:
+        - date-created
+      interface: datetime
+      options: null
+      display: datetime
+      display_options:
+        relative: true
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: comments
+    field: user_updated
+    type: string
+    schema:
+      name: user_updated
+      table: comments
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: id
+      foreign_key_table: directus_users
+    meta:
+      collection: comments
+      field: user_updated
+      special:
+        - user-updated
+      interface: select-dropdown-m2o
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      display: user
+      display_options: null
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: comments
+    field: date_updated
+    type: dateTime
+    schema:
+      name: date_updated
+      table: comments
+      data_type: datetime
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: comments
+      field: date_updated
+      special:
+        - date-updated
+      interface: datetime
+      options: null
+      display: datetime
+      display_options:
+        relative: true
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: comments
+    field: comment
+    type: text
+    schema:
+      name: comment
+      table: comments
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: comments
+      field: comment
+      special: null
+      interface: input
+      options: null
+      display: null
+      display_options: null
+      readonly: false
+      hidden: false
+      sort: null
+      width: full
+      translations: null
+      note: null
+      conditions: null
+      required: true
+      group: null
+      validation: null
+      validation_message: null
+  - collection: comments
+    field: topic_id
+    type: integer
+    schema:
+      name: topic_id
+      table: comments
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: id
+      foreign_key_table: topics
+    meta:
+      collection: comments
+      field: topic_id
+      special:
+        - m2o
+      interface: select-dropdown-m2o
+      options:
+        template: '{{name}}'
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      readonly: false
+      hidden: false
+      sort: null
+      width: full
+      translations: null
+      note: null
+      conditions: null
+      required: true
+      group: null
+      validation: null
+      validation_message: null
+  - collection: boards
+    field: id
+    type: integer
+    schema:
+      name: id
+      table: boards
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: true
+      has_auto_increment: true
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: boards
+      field: id
+      special: null
+      interface: input
+      options: null
+      display: null
+      display_options: null
+      readonly: true
+      hidden: true
+      sort: null
+      width: full
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: boards
+    field: user_created
+    type: string
+    schema:
+      name: user_created
+      table: boards
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: id
+      foreign_key_table: directus_users
+    meta:
+      collection: boards
+      field: user_created
+      special:
+        - user-created
+      interface: select-dropdown-m2o
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      display: user
+      display_options: null
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: boards
+    field: date_created
+    type: dateTime
+    schema:
+      name: date_created
+      table: boards
+      data_type: datetime
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: boards
+      field: date_created
+      special:
+        - date-created
+      interface: datetime
+      options: null
+      display: datetime
+      display_options:
+        relative: true
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: boards
+    field: user_updated
+    type: string
+    schema:
+      name: user_updated
+      table: boards
+      data_type: char
+      default_value: null
+      max_length: 36
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: id
+      foreign_key_table: directus_users
+    meta:
+      collection: boards
+      field: user_updated
+      special:
+        - user-updated
+      interface: select-dropdown-m2o
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      display: user
+      display_options: null
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: boards
+    field: date_updated
+    type: dateTime
+    schema:
+      name: date_updated
+      table: boards
+      data_type: datetime
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: boards
+      field: date_updated
+      special:
+        - date-updated
+      interface: datetime
+      options: null
+      display: datetime
+      display_options:
+        relative: true
+      readonly: true
+      hidden: true
+      sort: null
+      width: half
+      translations: null
+      note: null
+      conditions: null
+      required: false
+      group: null
+      validation: null
+      validation_message: null
+  - collection: boards
+    field: name
+    type: string
+    schema:
+      name: name
+      table: boards
+      data_type: varchar
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: null
+      foreign_key_table: null
+    meta:
+      collection: boards
+      field: name
+      special: null
+      interface: input
+      options: null
+      display: null
+      display_options: null
+      readonly: false
+      hidden: false
+      sort: null
+      width: full
+      translations: null
+      note: null
+      conditions: null
+      required: true
+      group: null
+      validation: null
+      validation_message: null
+  - collection: boards
+    field: project_id
+    type: integer
+    schema:
+      name: project_id
+      table: boards
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_generated: false
+      generation_expression: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      has_auto_increment: false
+      foreign_key_column: id
+      foreign_key_table: projects
+    meta:
+      collection: boards
+      field: project_id
       special:
         - m2o
       interface: select-dropdown-m2o
@@ -1266,13 +1582,8 @@ fields:
       conditions: null
       required: true
       group: null
-      validation:
-        _and:
-          - priority:
-              _between:
-                - '1'
-                - '5'
-      validation_message: null
+      validation: null
+      validation_message: Priority should be a whole number between 1 and 5
   - collection: topics
     field: description
     type: text
@@ -1313,18 +1624,18 @@ fields:
       validation_message: null
   - collection: topics
     field: tags
-    type: csv
+    type: json
     schema:
       name: tags
       table: topics
-      data_type: varchar
-      default_value: null
-      max_length: 255
+      data_type: json
+      default_value: []
+      max_length: null
       numeric_precision: null
       numeric_scale: null
       is_generated: false
       generation_expression: null
-      is_nullable: true
+      is_nullable: false
       is_unique: false
       is_primary_key: false
       has_auto_increment: false
@@ -1334,290 +1645,11 @@ fields:
       collection: topics
       field: tags
       special:
-        - cast-csv
+        - cast-json
       interface: tags
-      options:
-        alphabetize: true
-        capitalization: null
-      display: null
-      display_options: null
-      readonly: false
-      hidden: false
-      sort: null
-      width: full
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: comments
-    field: id
-    type: integer
-    schema:
-      name: id
-      table: comments
-      data_type: integer
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: false
-      is_unique: false
-      is_primary_key: true
-      has_auto_increment: true
-      foreign_key_column: null
-      foreign_key_table: null
-    meta:
-      collection: comments
-      field: id
-      special: null
-      interface: input
       options: null
       display: null
       display_options: null
-      readonly: true
-      hidden: true
-      sort: null
-      width: full
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: comments
-    field: user_created
-    type: string
-    schema:
-      name: user_created
-      table: comments
-      data_type: char
-      default_value: null
-      max_length: 36
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: id
-      foreign_key_table: directus_users
-    meta:
-      collection: comments
-      field: user_created
-      special:
-        - user-created
-      interface: select-dropdown-m2o
-      options:
-        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
-      display: user
-      display_options: null
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: comments
-    field: date_created
-    type: dateTime
-    schema:
-      name: date_created
-      table: comments
-      data_type: datetime
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: null
-      foreign_key_table: null
-    meta:
-      collection: comments
-      field: date_created
-      special:
-        - date-created
-      interface: datetime
-      options: null
-      display: datetime
-      display_options:
-        relative: true
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: comments
-    field: user_updated
-    type: string
-    schema:
-      name: user_updated
-      table: comments
-      data_type: char
-      default_value: null
-      max_length: 36
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: id
-      foreign_key_table: directus_users
-    meta:
-      collection: comments
-      field: user_updated
-      special:
-        - user-updated
-      interface: select-dropdown-m2o
-      options:
-        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
-      display: user
-      display_options: null
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: comments
-    field: date_updated
-    type: dateTime
-    schema:
-      name: date_updated
-      table: comments
-      data_type: datetime
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: true
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: null
-      foreign_key_table: null
-    meta:
-      collection: comments
-      field: date_updated
-      special:
-        - date-updated
-      interface: datetime
-      options: null
-      display: datetime
-      display_options:
-        relative: true
-      readonly: true
-      hidden: true
-      sort: null
-      width: half
-      translations: null
-      note: null
-      conditions: null
-      required: false
-      group: null
-      validation: null
-      validation_message: null
-  - collection: comments
-    field: comment
-    type: text
-    schema:
-      name: comment
-      table: comments
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: false
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: null
-      foreign_key_table: null
-    meta:
-      collection: comments
-      field: comment
-      special: null
-      interface: input
-      options: null
-      display: null
-      display_options: null
-      readonly: false
-      hidden: false
-      sort: null
-      width: full
-      translations: null
-      note: null
-      conditions: null
-      required: true
-      group: null
-      validation: null
-      validation_message: null
-  - collection: comments
-    field: topic_id
-    type: integer
-    schema:
-      name: topic_id
-      table: comments
-      data_type: integer
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_generated: false
-      generation_expression: null
-      is_nullable: false
-      is_unique: false
-      is_primary_key: false
-      has_auto_increment: false
-      foreign_key_column: id
-      foreign_key_table: topics
-    meta:
-      collection: comments
-      field: topic_id
-      special:
-        - m2o
-      interface: select-dropdown-m2o
-      options:
-        template: '{{name}}'
-      display: related-values
-      display_options:
-        template: '{{name}}'
       readonly: false
       hidden: false
       sort: null
@@ -1664,69 +1696,6 @@ relations:
       constraint_name: null
     meta:
       many_collection: projects
-      many_field: user_created
-      one_collection: directus_users
-      one_field: null
-      one_collection_field: null
-      one_allowed_collections: null
-      junction_field: null
-      sort_field: null
-      one_deselect_action: nullify
-  - collection: boards
-    field: project_id
-    related_collection: projects
-    schema:
-      table: boards
-      column: project_id
-      foreign_key_table: projects
-      foreign_key_column: id
-      on_update: NO ACTION
-      on_delete: NO ACTION
-      constraint_name: null
-    meta:
-      many_collection: boards
-      many_field: project_id
-      one_collection: projects
-      one_field: null
-      one_collection_field: null
-      one_allowed_collections: null
-      junction_field: null
-      sort_field: null
-      one_deselect_action: nullify
-  - collection: boards
-    field: user_updated
-    related_collection: directus_users
-    schema:
-      table: boards
-      column: user_updated
-      foreign_key_table: directus_users
-      foreign_key_column: id
-      on_update: NO ACTION
-      on_delete: NO ACTION
-      constraint_name: null
-    meta:
-      many_collection: boards
-      many_field: user_updated
-      one_collection: directus_users
-      one_field: null
-      one_collection_field: null
-      one_allowed_collections: null
-      junction_field: null
-      sort_field: null
-      one_deselect_action: nullify
-  - collection: boards
-    field: user_created
-    related_collection: directus_users
-    schema:
-      table: boards
-      column: user_created
-      foreign_key_table: directus_users
-      foreign_key_column: id
-      on_update: NO ACTION
-      on_delete: NO ACTION
-      constraint_name: null
-    meta:
-      many_collection: boards
       many_field: user_created
       one_collection: directus_users
       one_field: null
@@ -1798,69 +1767,6 @@ relations:
       junction_field: null
       sort_field: null
       one_deselect_action: nullify
-  - collection: topics
-    field: bucket_id
-    related_collection: buckets
-    schema:
-      table: topics
-      column: bucket_id
-      foreign_key_table: buckets
-      foreign_key_column: id
-      on_update: NO ACTION
-      on_delete: NO ACTION
-      constraint_name: null
-    meta:
-      many_collection: topics
-      many_field: bucket_id
-      one_collection: buckets
-      one_field: null
-      one_collection_field: null
-      one_allowed_collections: null
-      junction_field: null
-      sort_field: null
-      one_deselect_action: nullify
-  - collection: topics
-    field: user_updated
-    related_collection: directus_users
-    schema:
-      table: topics
-      column: user_updated
-      foreign_key_table: directus_users
-      foreign_key_column: id
-      on_update: NO ACTION
-      on_delete: NO ACTION
-      constraint_name: null
-    meta:
-      many_collection: topics
-      many_field: user_updated
-      one_collection: directus_users
-      one_field: null
-      one_collection_field: null
-      one_allowed_collections: null
-      junction_field: null
-      sort_field: null
-      one_deselect_action: nullify
-  - collection: topics
-    field: user_created
-    related_collection: directus_users
-    schema:
-      table: topics
-      column: user_created
-      foreign_key_table: directus_users
-      foreign_key_column: id
-      on_update: NO ACTION
-      on_delete: NO ACTION
-      constraint_name: null
-    meta:
-      many_collection: topics
-      many_field: user_created
-      one_collection: directus_users
-      one_field: null
-      one_collection_field: null
-      one_allowed_collections: null
-      junction_field: null
-      sort_field: null
-      one_deselect_action: nullify
   - collection: comments
     field: topic_id
     related_collection: topics
@@ -1916,6 +1822,132 @@ relations:
       constraint_name: null
     meta:
       many_collection: comments
+      many_field: user_created
+      one_collection: directus_users
+      one_field: null
+      one_collection_field: null
+      one_allowed_collections: null
+      junction_field: null
+      sort_field: null
+      one_deselect_action: nullify
+  - collection: boards
+    field: project_id
+    related_collection: projects
+    schema:
+      table: boards
+      column: project_id
+      foreign_key_table: projects
+      foreign_key_column: id
+      on_update: NO ACTION
+      on_delete: NO ACTION
+      constraint_name: null
+    meta:
+      many_collection: boards
+      many_field: project_id
+      one_collection: projects
+      one_field: null
+      one_collection_field: null
+      one_allowed_collections: null
+      junction_field: null
+      sort_field: null
+      one_deselect_action: nullify
+  - collection: boards
+    field: user_updated
+    related_collection: directus_users
+    schema:
+      table: boards
+      column: user_updated
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      on_update: NO ACTION
+      on_delete: NO ACTION
+      constraint_name: null
+    meta:
+      many_collection: boards
+      many_field: user_updated
+      one_collection: directus_users
+      one_field: null
+      one_collection_field: null
+      one_allowed_collections: null
+      junction_field: null
+      sort_field: null
+      one_deselect_action: nullify
+  - collection: boards
+    field: user_created
+    related_collection: directus_users
+    schema:
+      table: boards
+      column: user_created
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      on_update: NO ACTION
+      on_delete: NO ACTION
+      constraint_name: null
+    meta:
+      many_collection: boards
+      many_field: user_created
+      one_collection: directus_users
+      one_field: null
+      one_collection_field: null
+      one_allowed_collections: null
+      junction_field: null
+      sort_field: null
+      one_deselect_action: nullify
+  - collection: topics
+    field: bucket_id
+    related_collection: buckets
+    schema:
+      table: topics
+      column: bucket_id
+      foreign_key_table: buckets
+      foreign_key_column: id
+      on_update: NO ACTION
+      on_delete: NO ACTION
+      constraint_name: null
+    meta:
+      many_collection: topics
+      many_field: bucket_id
+      one_collection: buckets
+      one_field: null
+      one_collection_field: null
+      one_allowed_collections: null
+      junction_field: null
+      sort_field: null
+      one_deselect_action: nullify
+  - collection: topics
+    field: user_updated
+    related_collection: directus_users
+    schema:
+      table: topics
+      column: user_updated
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      on_update: NO ACTION
+      on_delete: NO ACTION
+      constraint_name: null
+    meta:
+      many_collection: topics
+      many_field: user_updated
+      one_collection: directus_users
+      one_field: null
+      one_collection_field: null
+      one_allowed_collections: null
+      junction_field: null
+      sort_field: null
+      one_deselect_action: nullify
+  - collection: topics
+    field: user_created
+    related_collection: directus_users
+    schema:
+      table: topics
+      column: user_created
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      on_update: NO ACTION
+      on_delete: NO ACTION
+      constraint_name: null
+    meta:
+      many_collection: topics
       many_field: user_created
       one_collection: directus_users
       one_field: null
