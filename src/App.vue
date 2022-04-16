@@ -14,7 +14,7 @@
           cols="12"
           absolute
         >
-          Edit on <a :href="'https://github.com'">GitHub</a>
+          Edit on <a :href="'https://github.com/Ashtacore/kabbage-boards'">GitHub</a>
         </v-col>
       </v-footer>
   </v-app>
