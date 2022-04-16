@@ -19,7 +19,7 @@
             label="Priority"
             v-model="newTopicPriority"
             type="number"
-            :rules="rules"
+            :rules="rulesNumber"
           ></v-text-field>
           <v-combobox
             chips
@@ -51,6 +51,7 @@ export default {
     dialog: false,
     valid: false,
     rules: [(v) => !!v || "Required"],
+    rulesNumber: [(v) => !!v || "Required", (v) => !isNaN(v) || "Must be a number", (v) => v >= 1 && v <= 5 || "Must be between 1 and 5"],
     newTopicName: '',
     newTopicPriority: 3,
     newTopicDescription: '',
