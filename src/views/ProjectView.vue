@@ -23,7 +23,7 @@
               group="bucket" 
               itemKey="id">
               <template #item="{ element }">
-                <v-list-item two-line class="list-group-item">
+                <v-list-item two-line class="list-group-item" :color="priorityColors[element.priority]">
                   <v-list-item-header>
                     <v-list-item-title>{{element.name}}</v-list-item-title>
                     <v-list-item-subtitle>{{element.description}}</v-list-item-subtitle>
@@ -62,6 +62,13 @@ export default defineComponent({
   components: { NewBoardDialog, NewBucketDialog, NewTopicDialog, draggable },
   data: () => ({
     newBoardDialog: false,
+    priorityColors: {
+      1: 'primary',
+      2: 'info',
+      3: undefined,
+      4: 'orange',
+      5: 'red',
+    },
   }),
   computed: {
     activeProject() {
