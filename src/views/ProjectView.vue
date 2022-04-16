@@ -14,21 +14,22 @@
           <v-list>
             <v-list-subheader>
               {{bucket.name}}
-              
+              <NewTopicDialog :bucket_id="bucket.id"/>
             </v-list-subheader>
             <draggable
               class="list-group"
-              v-model="topicsByBucketID[bucket.id]"
+              v-model="lists[bucket.id]"
+              @change="topicDragged"
               group="bucket" 
               itemKey="id">
-              <template #item="{element}">
-                <!-- <div>{{element.name}}</div> -->
-                <v-list-item two-line class="list-group-item">
+              <template #item="{ element, index }">
+                <div class="list-group-item">{{ element.name }} {{ index }}</div>
+                <!-- <v-list-item two-line class="list-group-item">
                   <v-list-item-header>
                     <v-list-item-title>{{element.name}}</v-list-item-title>
                     <v-list-item-subtitle>{{element.description}}</v-list-item-subtitle>
                   </v-list-item-header>
-                </v-list-item>
+                </v-list-item> -->
               </template>
             </draggable>
           </v-list>
@@ -54,13 +55,31 @@
 <script>
 import NewBoardDialog from '@/components/NewBoardDialog.vue';
 import NewBucketDialog from '@/components/NewBucketDialog.vue';
+import NewTopicDialog from '@/components/NewTopicDialog.vue';
 import { defineComponent } from 'vue';
 import draggable from 'vuedraggable';
 export default defineComponent({
   name: 'ProjectView',
-  components: { NewBoardDialog, NewBucketDialog, draggable },
+  components: { NewBoardDialog, NewBucketDialog, NewTopicDialog, draggable },
   data: () => ({
     newBoardDialog: false,
+    lists: {
+      1: [
+        { id: 1, name: 'List 1' },
+        { id: 2, name: 'List 2' },
+        { id: 3, name: 'List 3' },
+      ],
+      2: [
+        { id: 4, name: 'List 4' },
+        { id: 5, name: 'List 5' },
+        { id: 6, name: 'List 6' },
+      ],
+      3: [
+        { id: 7, name: 'List 7' },
+        { id: 8, name: 'List 8' },
+        { id: 9, name: 'List 9' },
+      ],
+    }
   }),
   computed: {
     activeProject() {

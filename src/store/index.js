@@ -37,6 +37,14 @@ export default createStore({
       return state.activeTopics.map(topic => topic.id);
     },
 
+    previouslyUsedTags (state) {
+      let tags = [];
+      state.activeTopics.forEach(topic => {
+        tags = tags.concat(topic.tags);
+      });
+      return tags;
+    },
+
     bucketsByBoardID (state) {
       let output = {}
       state.activeBoards.forEach(board => {
@@ -220,6 +228,14 @@ export default createStore({
         context.commit('upsertBucket', newBucket);
       }).catch(error => {
         console.log('Could not create new bucket: ' + error);
+      });
+    },
+
+    newTopic(context, topic) {
+      directus.items('topics').createOne(topic ,{fields: ['id', 'name', 'bucket_id', 'priority', 'description', 'tags']}).then(newTopic => {
+        context.commit('upsertTopic', newTopic);
+      }).catch(error => {
+        console.log('Could not create new topic: ' + error);
       });
     }
   },
