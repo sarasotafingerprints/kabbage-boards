@@ -3,10 +3,20 @@
       <NavBar />
 
       <v-main>
-        <v-container fluid>
+        <v-container fluid style="height: 87vh;">
           <router-view :key="$route.fullPath" />
         </v-container>
       </v-main>
+
+      <v-footer padless>
+        <v-col
+          class="text-right"
+          cols="12"
+          absolute
+        >
+          Edit on <a :href="'https://github.com'">GitHub</a>
+        </v-col>
+      </v-footer>
   </v-app>
 </template>
 
