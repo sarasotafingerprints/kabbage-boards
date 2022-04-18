@@ -28,6 +28,9 @@
                     <v-list-item-title>{{element.name}}</v-list-item-title>
                     <v-list-item-subtitle>{{element.description}}</v-list-item-subtitle>
                   </v-list-item-header>
+                  <v-list-item-avatar end>
+                    <CommentsMenu :activeTopic="element"/>
+                  </v-list-item-avatar>
                 </v-list-item>
               </template>
             </draggable>
@@ -55,11 +58,12 @@
 import NewBoardDialog from '@/components/NewBoardDialog.vue';
 import NewBucketDialog from '@/components/NewBucketDialog.vue';
 import NewTopicDialog from '@/components/NewTopicDialog.vue';
+import CommentsMenu from '@/components/CommentsMenu.vue';
 import { defineComponent } from 'vue';
 import draggable from 'vuedraggable';
 export default defineComponent({
   name: 'ProjectView',
-  components: { NewBoardDialog, NewBucketDialog, NewTopicDialog, draggable },
+  components: { NewBoardDialog, NewBucketDialog, NewTopicDialog, CommentsMenu, draggable },
   data: () => ({
     newBoardDialog: false,
     priorityColors: {
@@ -88,6 +92,9 @@ export default defineComponent({
         // This prevents any direct modification
         console.log(value)
       },
+    },
+    commentsByTopicID() {
+      return this.$store.getters.commentsByTopicID;
     },
   },
   methods: {

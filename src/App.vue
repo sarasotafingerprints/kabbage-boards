@@ -1,5 +1,8 @@
 <template>
   <v-app>
+      <v-dialog v-model="connected" @click:outside.prevent width="500">
+        <LoginDialog />
+      </v-dialog>
       <NavBar />
 
       <v-main>
@@ -22,21 +25,17 @@
 
 <script>
 import NavBar from "./components/NavBar.vue";
+import LoginDialog from "./components/LoginDialog.vue";
 export default {
-  components: { NavBar },
+  components: { NavBar, LoginDialog },
   name: "KabbageBoards",
-  created() {
-    this.$store.dispatch("connectToDirectus").then(() => {
-      if(this.$route.params.id > 0) {
-        this.$store.dispatch("setActiveProject", this.$route.params.id);
-      }
-      this.$watch(
-        () => this.$route.params.id,
-        (newID) => {
-          this.$store.dispatch("setActiveProject", newID);
-        }
-      )
-    });
+  data: () => ({
+    loginDialog: true,
+  }),
+  computed: {
+    connected() {
+      return !this.$store.state.connected;
+    },
   },
 };
 </script>

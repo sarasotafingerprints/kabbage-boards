@@ -1,9 +1,7 @@
 import { createStore } from 'vuex'
 import { Directus } from '@directus/sdk';
 
-const directus = new Directus('http://localhost:8055');
-const directusLogin = 'runyan@ashtacore.com'
-const directusPassword = 'd1r3ctu5'
+let directus // var used for Directus instance
 
 export default createStore({
   state: {
@@ -16,7 +14,9 @@ export default createStore({
     activeBoards: [],
     activeBuckets: [],
     activeTopics: [],
-    activeComments: []
+    activeComments: [],
+
+    connected: false
   },
   getters: {
     sortedProjects (state) {
@@ -66,7 +66,11 @@ export default createStore({
     commentsByTopicID (state) {
       let output = {}
       state.activeTopics.forEach(topic => {
-        output[topic.id] = state.activeComments.filter(comment => comment.topic_id === topic.id)
+        output[topic.id] = state.activeComments.filter(comment => comment.topic_id === topic.id).sort((a, b) => {
+          if (a.date_created < b.date_created) return 1
+          if (a.date_created > b.date_created) return -1
+          return 0
+        });
       });
       return output
     }
@@ -89,6 +93,9 @@ export default createStore({
     },
     setActiveComments(state, comments) {
       state.activeComments = comments;
+    },
+    setConnected(state, connected) {
+      state.connected = connected;
     },
 
     upsertProject(state, project) {
@@ -133,13 +140,17 @@ export default createStore({
     }
   },
   actions: {
-    async connectToDirectus(context) {
+    async connectToDirectus(context, {directusEndpoint, directusLogin, directusPassword}) {
+      directus = new Directus(directusEndpoint);
+
       await directus.auth.login({
         email: directusLogin,
         password: directusPassword,
       }).catch(error => {
         console.log('Could not connect to Directus backend: ' + error);
       });
+
+      context.commit('setConnected', true);
 
       await context.dispatch('getProjects');
     },
@@ -193,7 +204,7 @@ export default createStore({
 
       //Get buckets relating to active boards
       await directus.items('comments').readByQuery({
-        fields: ['id', 'comment', 'topic_id'], limit: -1,
+        fields: ['id', 'comment', 'topic_id', 'user_created', 'date_created'], limit: -1,
         filter: {"topic_id": {"_in": context.getters.activeTopicIDs}}
       }).then(response => {
         context.commit('setActiveComments', response.data);
@@ -244,7 +255,7 @@ export default createStore({
     },
 
     newComment(context, comment) {
-      directus.items('comments').createOne(comment ,{fields: ['id', 'comment', 'topic_id']}).then(newComment => {
+      directus.items('comments').createOne(comment ,{fields: ['id', 'comment', 'topic_id', 'user_created', 'date_created']}).then(newComment => {
         context.commit('upsertComment', newComment);
       }).catch(error => {
         console.log('Could not create new comment: ' + error);
