@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import { Directus } from '@directus/sdk';
 
-let directus // var used for Directus instance
+let directus = new Directus('http://localhost:8055');
 
 export default createStore({
   state: {
@@ -16,7 +16,7 @@ export default createStore({
     activeTopics: [],
     activeComments: [],
 
-    connected: false
+    authenticated: false
   },
   getters: {
     sortedProjects (state) {
@@ -94,8 +94,8 @@ export default createStore({
     setActiveComments(state, comments) {
       state.activeComments = comments;
     },
-    setConnected(state, connected) {
-      state.connected = connected;
+    setAuthenticated(state, authenticated) {
+      state.authenticated = authenticated;
     },
 
     upsertProject(state, project) {
@@ -140,19 +140,18 @@ export default createStore({
     }
   },
   actions: {
-    async connectToDirectus(context, {directusEndpoint, directusLogin, directusPassword}) {
-      directus = new Directus(directusEndpoint);
-
-      await directus.auth.login({
-        email: directusLogin,
-        password: directusPassword,
-      }).catch(error => {
-        console.log('Could not connect to Directus backend: ' + error);
+    async authToDirectus(context, {directusLogin, directusPassword}) {
+      return new Promise((resolve, reject) => {
+        directus.auth.login({
+          email: directusLogin,
+          password: directusPassword,
+        }).then(() => {
+          context.commit('setAuthenticated', true);
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
       });
-
-      context.commit('setConnected', true);
-
-      await context.dispatch('getProjects');
     },
 
     async getProjects(context) {

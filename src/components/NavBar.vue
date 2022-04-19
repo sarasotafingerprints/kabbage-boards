@@ -7,9 +7,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn variant="text" icon @click="downloadProjectBackup">
-          <v-icon>mdi-backup-restore</v-icon>
-        </v-btn>
+        <LoginDialog v-if="!authenticated"/>
       </v-app-bar>
 
       <v-navigation-drawer
@@ -22,7 +20,7 @@
             <v-list-item-title>{{value.name}}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item @click="newProjectDialog = true">
+          <v-list-item @click="newProjectDialog = true" v-if="authenticated">
             <v-list-item-avatar start>
               <v-icon icon="mdi-folder-plus-outline" class="mr-2"></v-icon>
             </v-list-item-avatar>
@@ -32,15 +30,16 @@
       </v-navigation-drawer>
 
       <v-dialog v-model="newProjectDialog" width="500">
-        <NewProjectMenu @saved="newProjectDialog = false" />
+        <NewProjectMenu @saved="newProjectDialog = false"/>
       </v-dialog>
   </v-card>
 </template>
 
 <script>
 import NewProjectMenu from '@/components/NewProjectMenu.vue';
+import LoginDialog from '@/components/LoginDialog.vue';
 export default {
-  components: { NewProjectMenu },
+  components: { NewProjectMenu, LoginDialog },
   data: () => ({
     drawer: false,
     newProjectDialog: false,
@@ -48,6 +47,9 @@ export default {
   computed: {
     projects() {
       return this.$store.getters.sortedProjects;
+    },
+    authenticated() {
+      return this.$store.state.authenticated;
     },
   },
   methods: {

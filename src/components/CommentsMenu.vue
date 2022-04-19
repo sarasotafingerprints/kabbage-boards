@@ -15,7 +15,7 @@
       
       <v-form @submit.prevent="submit" v-model="valid" ref="form">
         <v-card-text>
-          <v-btn color="primary" v-if="!commenting" @click="commenting = true">
+          <v-btn color="primary" v-if="!commenting && authenticated" @click="commenting = true">
             <v-icon>mdi-plus</v-icon>
             Add Comment
           </v-btn>
@@ -51,6 +51,9 @@ export default {
   computed: {
     comments() {
       return this.$store.getters.commentsByTopicID[this.activeTopic.id];
+    },
+    authenticated() {
+      return this.$store.state.authenticated;
     },
   },
   methods: {

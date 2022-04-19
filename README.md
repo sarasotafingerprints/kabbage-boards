@@ -9,10 +9,12 @@ Lots of ways to set Directus up, just pick your favorite here: https://docs.dire
 After it is setup you will need to run `npx directus schema apply directusSchema.yaml`
 If you're using docker then you can use `sudo docker cp directusSchema.yaml directus:/directus/snapshot.yaml` to get the snapshot on your docker
 
-You will need to supply an admin username and pass when you use the app, so have that ready.
+Next log into your directus instance and give the public role read access to all the collections we just added.
+
+Finally create a user role with read/create/edit access to those same collections and create a user for yourself.
 
 ## Kabbage
-If you want to run locally then edit the .env with your enviroments values.
+If your directus instance is not at http://localhost:8055 then modify `src/store/index.js` with the correct value
 Here's the standard node commands:
 ```
 npm install
@@ -20,12 +22,15 @@ npm run serve
 npm run build
 ```
 
+You may want to use this alternative build command as I haven't actually got to setting up the PWA part of this app: 
+```
+npx vue-cli-service build --skip-plugins pwa,workbox
+```
+
 If you want to use docker then you can build the included docker file. Here's a sample docker command to start:
 ```
 sudo docker run -it -d -p 8080:80 --rm --name Kabbage kabbageboards:latest
 ```
-
-However I would recomend you change the `directusEndpoint` in `@/components/LoginDialog.vue` with the address for your directus endpoint then disable/remove the corresponding textfield. 
 
 # Attributions
 Art used in public/img is public domain and was optained here: https://openclipart.org/detail/326439/cabbage-head

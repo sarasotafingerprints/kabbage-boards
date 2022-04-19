@@ -5,7 +5,7 @@
   >
     <v-card-title>
       {{board.name}}
-      <NewBucketDialog :board_id="board.id"/>
+      <NewBucketDialog :board_id="board.id" v-if="authenticated"/>
     </v-card-title>
 
     <v-card-text>
@@ -14,7 +14,7 @@
           <v-list>
             <v-list-subheader>
               {{bucket.name}}
-              <NewTopicDialog :bucket_id="bucket.id"/>
+              <NewTopicDialog :bucket_id="bucket.id" v-if="authenticated"/>
             </v-list-subheader>
             <draggable
               class="list-group"
@@ -44,13 +44,14 @@
     class="mt-2"
     color="primary"
     @click.stop="newBoardDialog = true"
+    v-if="authenticated"
   >
     <v-icon left>mdi-plus-box-outline</v-icon>
     Add Board
   </v-btn>
 
   <v-dialog v-model="newBoardDialog" width="500">
-    <NewBoardDialog @saved="newBoardDialog = false" />
+    <NewBoardDialog @saved="newBoardDialog = false"/>
   </v-dialog>
 </template>
 
@@ -95,6 +96,9 @@ export default defineComponent({
     },
     commentsByTopicID() {
       return this.$store.getters.commentsByTopicID;
+    },
+    authenticated() {
+      return this.$store.state.authenticated;
     },
   },
   methods: {
