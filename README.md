@@ -5,7 +5,8 @@ This is a simple Kanban board app written using Vue 3 and the Vuetify 3 beta. Th
 At a high level this app requires two things. A Directus database, and a webserver for the node app.
 
 ## Directus
-Lots of ways to set Directus up, just pick your favorite here: https://docs.directus.io/getting-started/installation/
+Lots of ways to set Directus up, just pick your favorite here: https://docs.directus.io/self-hosted/quickstart.html
+
 After it is setup you will need to run `npx directus schema apply directusSchema.yaml`
 If you're using docker then you can use `sudo docker cp directusSchema.yaml directus:/directus/snapshot.yaml` to get the snapshot on your docker
 
